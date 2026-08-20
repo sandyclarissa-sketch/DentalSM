@@ -3,10 +3,6 @@
   "name": "dentalsm",
   "main": "index.js",
   "compatibility_date": "2026-08-19",
-  "assets": {
-    "directory": "./public",
-    "binding": "ASSETS"
-  },
   "d1_databases": [
     {
       "binding": "DB",
