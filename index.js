@@ -36,10 +36,14 @@ Secure; SameSite=Lax; Max-Age=604800`}
 });
 }
 if (url.pathname === "/api/logout" && request.method === "POST") {
-if (sid) await env.DB.prepare("DELETE FROM sessions WHERE id=?").bind(sid).run();
-return new Response('{"ok":true}',{
-headers:{"content-type":"application/json","set-cookie":"dsm_session=; Path=/; HttpOnly; Secure;
-SameSite=Lax; Max-Age=0"}
+if (sid) {
+await env.DB.prepare("DELETE FROM sessions WHERE id=?").bind(sid).run();
+}
+return new Response('{"ok":true}', {
+headers: {
+"content-type": "application/json",
+"set-cookie": "dsm_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0"
+}
 });
 }
 const user = sid ? await sessionUser(env.DB,sid) : null;
@@ -478,11 +482,11 @@ msg.textContent="Diente "+currentTooth+" guardado correctamente.";
 setTimeout(()=>{
 msg.textContent="";
 },2000);
-}
 function cancelToothEdit(){
 currentTooth=null;
 document.getElementById("odontogramEditor").classList.add("hidden");
 refreshToothButtons();
+}
 }
 function getStatusLabel(status){
 const found=TOOTH_STATUSES.find(x=>x.value===status);
@@ -493,9 +497,9 @@ const x=await api("/api/appointments");
 agendaList.innerHTML=Array.isArray(x.d)&&x.d.length
 ?x.d.map(a=>"<p><b>"+esc(a.full_name||a.patient_id)+"</b> · "+esc(a.starts_at)+"</p>").join("")
 :"Aún no hay citas.";
-}
 function esc(s){
-return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
+}
+return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 init();
 </script></body></html>`;
