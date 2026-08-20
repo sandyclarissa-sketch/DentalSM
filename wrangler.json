@@ -10,8 +10,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "DentalSM-DB",
-      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+      "database_name": "dentalsm",
+      "database_id": "640ed9ee-e46b-4b36-96dc-c6de07b2f3da"
     }
   ]
 }
