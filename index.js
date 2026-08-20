@@ -49,9 +49,8 @@ headers: {
 const user = sid ? await sessionUser(env.DB,sid) : null;
 if (!user) return json({error:"No autorizado."},401);
 if (url.pathname === "/api/patients" && request.method === "GET") {
-const r = await env.DB.prepare(
-"SELECT id,full_name,phone,email,birth_date,created_at FROM patients ORDER BY created_at DESC"
-).all();
+const r = await env.DB.prepare("SELECT id,full_name,phone,email,birth_date,created_at FROM patients
+ORDER BY created_at DESC").all();
 return json(r.results || []);
 }
 if (url.pathname === "/api/patients" && request.method === "POST") {
@@ -60,18 +59,15 @@ const b = await body(request);
 const name = String(b.full_name||"").trim();
 if (!name) return json({error:"El nombre completo es obligatorio."},400);
 const id = crypto.randomUUID();
-await env.DB.prepare(
-"INSERT INTO patients (id,full_name,phone,email,birth_date,created_at) VALUES (?,?,?,?,?,
-CURRENT_TIMESTAMP)"
-).bind(id,name,String(b.phone||"").trim(),String(b.email||"").trim(),String(b.birth_date||"").trim()).
-run();
+await env.DB.prepare("INSERT INTO patients (id,full_name,phone,email,birth_date,created_at) VALUES (?,?,
+?,?,?,CURRENT_TIMESTAMP)").bind(id,name,String(b.phone||"").trim(),String(b.email||"").trim(),String(b.
+birth_date||"").trim()).run();
 return json({ok:true,id});
 }
 if (url.pathname.startsWith("/api/patients/") && request.method === "GET") {
 const id = url.pathname.split("/").pop();
-const p = await env.DB.prepare(
-"SELECT id,full_name,phone,email,birth_date,created_at FROM patients WHERE id=?"
-).bind(id).first();
+const p = await env.DB.prepare("SELECT id,full_name,phone,email,birth_date,created_at FROM patients
+WHERE id=?").bind(id).first();
 return p ? json(p) : json({error:"Paciente no encontrado."},404);
 }
 if (url.pathname === "/api/odontogram" && request.method === "GET") {
@@ -116,10 +112,8 @@ updated_at=CURRENT_TIMESTAMP`
 return json({ok:true,tooth,status,notes});
 }
 if (url.pathname === "/api/appointments" && request.method === "GET") {
-const r = await env.DB.prepare(
-"SELECT a.id,a.patient_id,p.full_name,a.starts_at,a.ends_at,a.status,a.notes FROM appointments a LEFT
-JOIN patients p ON p.id=a.patient_id ORDER BY a.starts_at"
-).all();
+const r = await env.DB.prepare("SELECT a.id,a.patient_id,p.full_name,a.starts_at,a.ends_at,a.status,a.
+notes FROM appointments a LEFT JOIN patients p ON p.id=a.patient_id ORDER BY a.starts_at").all();
 return json(r.results || []);
 }
 return json({error:"No encontrado."},404);
@@ -482,11 +476,11 @@ msg.textContent="Diente "+currentTooth+" guardado correctamente.";
 setTimeout(()=>{
 msg.textContent="";
 },2000);
+}
 function cancelToothEdit(){
 currentTooth=null;
 document.getElementById("odontogramEditor").classList.add("hidden");
 refreshToothButtons();
-}
 }
 function getStatusLabel(status){
 const found=TOOTH_STATUSES.find(x=>x.value===status);
@@ -497,9 +491,9 @@ const x=await api("/api/appointments");
 agendaList.innerHTML=Array.isArray(x.d)&&x.d.length
 ?x.d.map(a=>"<p><b>"+esc(a.full_name||a.patient_id)+"</b> · "+esc(a.starts_at)+"</p>").join("")
 :"Aún no hay citas.";
+}
 function esc(s){
-}
-}
 return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 init();
 </script></body></html>`;
