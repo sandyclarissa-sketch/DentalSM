@@ -120,10 +120,10 @@ button{border:0;border-radius:10px;padding:12px 16px;background:#1769e0;color:wh
 
 <section id="setup" class="card hidden"><h1>Configuración inicial</h1><p class="muted">Crea la primera cuenta Administradora.</p>
 <label>Nombre</label><input id="setupName"><label>Correo</label><input id="setupEmail" value="smdental99@gmail.com"><label>Contraseña</label><input id="setupPass" type="password">
-<button onclick="setup()">Crear administradora</button><p id="setupMsg"></p></section>
+<button onclick="setupAdmin()">Crear administradora</button><p id="setupMsg"></p></section>
 
 <section id="login" class="card hidden"><h1>Acceso seguro</h1><label>Correo</label><input id="email" value="smdental99@gmail.com"><label>Contraseña</label><input id="password" type="password">
-<button onclick="login()">Iniciar sesión</button><p id="loginMsg"></p></section>
+<button onclick="loginUser()">Iniciar sesión</button><p id="loginMsg"></p></section>
 
 <section id="app" class="hidden"><div class="card"><h1>Panel DentalSM</h1><p id="welcome" class="muted"></p>
 <button onclick="show('home')">Inicio</button><button onclick="show('patients')">Pacientes</button><button onclick="show('agenda')">Agenda</button><button class="secondary" onclick="logout()">Cerrar sesión</button></div>
@@ -148,9 +148,14 @@ button{border:0;border-radius:10px;padding:12px 16px;background:#1769e0;color:wh
 let me;
 async function api(p,o){const r=await fetch(p,o),d=await r.json().catch(()=>({}));return{r,d}}
 async function init(){const x=await api('/api/me');if(x.d.authenticated){me=x.d.user;openApp();return}document.querySelector('#login').classList.remove('hidden');}
-function openApp(){setup.classList.add('hidden');login.classList.add('hidden');app.classList.remove('hidden');welcome.textContent=me.name+' · '+me.role}
-async function setup(){const x=await api('/api/setup-admin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:setupName.value,email:setupEmail.value,password:setupPass.value})});setupMsg.className=x.r.ok?'ok':'error';setupMsg.textContent=x.r.ok?'Administrador creado. Ya puedes iniciar sesión.':x.d.error||'Error';if(x.r.ok){document.querySelector('#setup').classList.add('hidden');document.querySelector('#login').classList.remove('hidden')}}
-async function login(){const x=await api('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email.value,password:password.value})});if(!x.r.ok){loginMsg.className='error';loginMsg.textContent=x.d.error||'Error';return}location.reload()}
+function openApp(){
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('welcome').textContent=me.name+' · '+me.role;
+}
+async function setupAdmin(){const x=await api('/api/setup-admin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:setupName.value,email:setupEmail.value,password:setupPass.value})});setupMsg.className=x.r.ok?'ok':'error';setupMsg.textContent=x.r.ok?'Administrador creado. Ya puedes iniciar sesión.':x.d.error||'Error';if(x.r.ok){document.querySelector('#setup').classList.add('hidden');document.querySelector('#login').classList.remove('hidden')}}
+async function loginUser(){const x=await api('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email.value,password:password.value})});if(!x.r.ok){loginMsg.className='error';loginMsg.textContent=x.d.error||'Error';return}location.reload()}
 async function logout(){await fetch('/api/logout',{method:'POST'});location.reload()}
 function show(id){for(const x of ['home','patients','agenda','detail'])document.querySelector('#'+x).classList.toggle('hidden',x!==id);if(id==='patients')loadPatients();if(id==='agenda')loadAgenda()}
 function toggleForm(){newPatient.classList.toggle('hidden')}
